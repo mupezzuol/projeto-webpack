@@ -15,10 +15,17 @@ module -> Adiciono módulo, dentro dele regras, posso ter várias regras (rules)
 // __dirname -> Pega o caminho do módulo e concatena com o 'dist' passado, montando o path que nós importaremos no 'index.html'
 const path = require('path');
 const babiliPlugin = require('babili-webpack-plugin');//Plugin do babili
+const extractTextPlugin = require('extract-text-webpack-plugin');//plugin para usar com o CSS para jogar no link
 
 //Verificando a variavel setado na hora da execução, se for prod nós criamos um plugin e adicionamos nas configs do module
 //dessa forma fazemos build de prod com arquios minificados etc...
 let plugins = [];
+
+//Adc plugin do CSS com o nome que será o arquivo CSS que recebrá todo conteúdo do CSS que o bundle.js gerar
+plugins.push(
+    new extractTextPlugin("styles.css")
+);
+
 if (process.env.NODE_ENV == 'production') {
     plugins.push(new babiliPlugin());
 }
@@ -43,9 +50,13 @@ module.exports = {
             },
 
             //Loader -> será chamado sempre da DIREITA para ESQUERDA
+            //Uso o resultado do 'extractTextPlugin' como loade.. fallback se der ruim chamará o style, caso contrário chamara o css-loader
             {
                 test: /\.css$/,
-                loader: 'style-loader!css-loader'
+                use: extractTextPlugin.extract({
+                    fallback: 'style-loader',
+                    use: 'css-loader'
+                })
             },
 
             //Abaixo segue LOADERS para tratar arquivos do bootstrap de fontes... (woff, ttf, eot, svg)
