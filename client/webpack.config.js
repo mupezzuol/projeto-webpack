@@ -19,7 +19,7 @@ const babiliPlugin = require('babili-webpack-plugin');//Plugin do babili
 //Verificando a variavel setado na hora da execução, se for prod nós criamos um plugin e adicionamos nas configs do module
 //dessa forma fazemos build de prod com arquios minificados etc...
 let plugins = [];
-if(process.env.NODE_ENV == 'production') {
+if (process.env.NODE_ENV == 'production') {
     plugins.push(new babiliPlugin());
 }
 
@@ -40,6 +40,30 @@ module.exports = {
                 use: {
                     loader: 'babel-loader'
                 }
+            },
+
+            //Loader -> será chamado sempre da DIREITA para ESQUERDA
+            {
+                test: /\.css$/,
+                loader: 'style-loader!css-loader'
+            },
+
+            //Abaixo segue LOADERS para tratar arquivos do bootstrap de fontes... (woff, ttf, eot, svg)
+            {
+                test: /\.(woff|woff2)(\?v=\d+\.\d+\.\d+)?$/,
+                loader: 'url-loader?limit=10000&mimetype=application/font-woff'
+            },
+            {
+                test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
+                loader: 'url-loader?limit=10000&mimetype=application/octet-stream'
+            },
+            {
+                test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
+                loader: 'file-loader'
+            },
+            {
+                test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+                loader: 'url-loader?limit=10000&mimetype=image/svg+xml'
             }
         ]
     },
