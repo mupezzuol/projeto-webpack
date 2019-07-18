@@ -31,6 +31,17 @@ plugins.push(
     })
 );
 
+//Identificados para separar arquivos .js
+//Bibliotecas de terceiros será separado dos .js da aplicação
+plugins.push(
+    new webpack.optimize.CommonsChunkPlugin(
+        { 
+            name: 'vendor', 
+            filename: 'vendor.bundle.js'
+        }
+    )
+);
+
 
 //Adc plugin do CSS com o nome que será o arquivo CSS que recebrá todo conteúdo do CSS que o bundle.js gerar
 plugins.push(
@@ -56,7 +67,10 @@ if (process.env.NODE_ENV == 'production') {
 
     //Criando nosso módulo do webpack passando as configurações em forma de objeto
     module.exports = {
-        entry: './app-src/app.js',
+        entry: {
+            app: './app-src/app.js',
+            vendor: ['jquery', 'bootstrap', 'reflect-metadata']
+        },
         output: {
             filename: 'bundle.js',
             path: path.resolve(__dirname, 'dist'),
