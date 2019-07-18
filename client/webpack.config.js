@@ -17,10 +17,20 @@ const path = require('path');
 const babiliPlugin = require('babili-webpack-plugin');//Plugin do babili
 const extractTextPlugin = require('extract-text-webpack-plugin');//plugin para usar com o CSS para jogar no link
 const optimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');//plugin para comprimir meu css
+const webpack = require('webpack'); //Webpack
+
 
 //Verificando a variavel setado na hora da execução, se for prod nós criamos um plugin e adicionamos nas configs do module
 //dessa forma fazemos build de prod com arquios minificados etc...
 let plugins = [];
+
+plugins.push(
+    new webpack.ProvidePlugin({
+        '$': 'jquery/dist/jquery.js',
+        'jQuery': 'jquery/dist/jquery.js'
+    })
+);
+
 
 //Adc plugin do CSS com o nome que será o arquivo CSS que recebrá todo conteúdo do CSS que o bundle.js gerar
 plugins.push(
