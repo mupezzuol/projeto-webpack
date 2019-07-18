@@ -18,6 +18,7 @@ const babiliPlugin = require('babili-webpack-plugin');//Plugin do babili
 const extractTextPlugin = require('extract-text-webpack-plugin');//plugin para usar com o CSS para jogar no link
 const optimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');//plugin para comprimir meu css
 const webpack = require('webpack'); //Webpack
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 
 //Verificando a variavel setado na hora da execução, se for prod nós criamos um plugin e adicionamos nas configs do module
@@ -41,6 +42,19 @@ plugins.push(
         }
     )
 );
+
+//Gerando um novo index.html e atribuindo meus .css, .js etc...
+//Vou gerar o arquivos 'index.html' através do arquivo 'main.html'
+plugins.push(new HtmlWebpackPlugin({
+    hash: true,
+    minify: {
+        html5: true,
+        collapseWhitespace: true,
+        removeComments: true,
+    },    
+    filename: 'index.html',
+    template: __dirname + '/main.html'
+}));
 
 
 //Adc plugin do CSS com o nome que será o arquivo CSS que recebrá todo conteúdo do CSS que o bundle.js gerar
@@ -74,7 +88,6 @@ if (process.env.NODE_ENV == 'production') {
         output: {
             filename: 'bundle.js',
             path: path.resolve(__dirname, 'dist'),
-            publicPath: 'dist'
         },
         module: {
             rules: [
