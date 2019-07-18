@@ -1,4 +1,4 @@
-import { Negociacoes, NegociacaoService, Negociacao } from '../domain/index.js';
+import { Negociacoes, Negociacao } from '../domain/index.js';
 import { NegociacoesView, MensagemView, Mensagem, DateConverter } from '../ui/index.js';
 import { getNegociacaoDao, Bind, getExceptionMessage, debounce, controller, bindEvent } from '../util/index.js';
 
@@ -20,8 +20,6 @@ export class NegociacaoController {
             new MensagemView('#mensagemView'),
             'texto'
         );
-
-        this._service = new NegociacaoService();
 
         this._init();
     }
@@ -75,7 +73,14 @@ export class NegociacaoController {
     async importaNegociacoes() {
 
         try {
-            const negociacoes = await this._service.obtemNegociacoesDoPeriodo();
+            //Usando o ASYNC+AWAIT para requisição ASSINCRONA
+            //Qnd me retornar uma promise ele fará o processo que o webpack irá entender
+            //O webpack irá entender que isso é um módulo/parte do código a parte, ou seja, ele não irá loca no bundle.js
+            // Ele criará um 0_bundle.js, e qnd eu usar esse método ele usará o bundle.ls, só irá carregar quando for solicitado
+            const { NegociacaoService } = await System.import('../domain/negociacao/NegociacaoService');
+            const service = new NegociacaoService();
+
+            const negociacoes = await service.obtemNegociacoesDoPeriodo();
             console.log(negociacoes);
             negociacoes.filter(novaNegociacao =>
 
