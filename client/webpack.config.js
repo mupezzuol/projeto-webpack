@@ -16,6 +16,7 @@ module -> Adiciono módulo, dentro dele regras, posso ter várias regras (rules)
 const path = require('path');
 const babiliPlugin = require('babili-webpack-plugin');//Plugin do babili
 const extractTextPlugin = require('extract-text-webpack-plugin');//plugin para usar com o CSS para jogar no link
+const optimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');//plugin para comprimir meu css
 
 //Verificando a variavel setado na hora da execução, se for prod nós criamos um plugin e adicionamos nas configs do module
 //dessa forma fazemos build de prod com arquios minificados etc...
@@ -28,55 +29,65 @@ plugins.push(
 
 if (process.env.NODE_ENV == 'production') {
     plugins.push(new babiliPlugin());
-}
-
-
-//Criando nosso módulo do webpack passando as configurações em forma de objeto
-module.exports = {
-    entry: './app-src/app.js',
-    output: {
-        filename: 'bundle.js',
-        path: path.resolve(__dirname, 'dist'),
-        publicPath: 'dist'
-    },
-    module: {
-        rules: [
-            {
-                test: /\.js$/,
-                exclude: /node_modules/,
-                use: {
-                    loader: 'babel-loader'
-                }
-            },
-
-            //Loader -> será chamado sempre da DIREITA para ESQUERDA
-            //Uso o resultado do 'extractTextPlugin' como loade.. fallback se der ruim chamará o style, caso contrário chamara o css-loader
-            {
-                test: /\.css$/,
-                use: extractTextPlugin.extract({
-                    fallback: 'style-loader',
-                    use: 'css-loader'
-                })
-            },
-
-            //Abaixo segue LOADERS para tratar arquivos do bootstrap de fontes... (woff, ttf, eot, svg)
-            {
-                test: /\.(woff|woff2)(\?v=\d+\.\d+\.\d+)?$/,
-                loader: 'url-loader?limit=10000&mimetype=application/font-woff'
-            },
-            {
-                test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
-                loader: 'url-loader?limit=10000&mimetype=application/octet-stream'
-            },
-            {
-                test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-                loader: 'file-loader'
-            },
-            {
-                test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-                loader: 'url-loader?limit=10000&mimetype=image/svg+xml'
+    
+    plugins.push(new optimizeCSSAssetsPlugin({
+        cssProcessor: require('cssnano'),
+        cssProcessorOptions: { 
+            discardComments: {
+                removeAll: true 
             }
-        ]
-    },
-    plugins
+        },
+        canPrint: true
+     }));    
 }
+
+
+    //Criando nosso módulo do webpack passando as configurações em forma de objeto
+    module.exports = {
+        entry: './app-src/app.js',
+        output: {
+            filename: 'bundle.js',
+            path: path.resolve(__dirname, 'dist'),
+            publicPath: 'dist'
+        },
+        module: {
+            rules: [
+                {
+                    test: /\.js$/,
+                    exclude: /node_modules/,
+                    use: {
+                        loader: 'babel-loader'
+                    }
+                },
+
+                //Loader -> será chamado sempre da DIREITA para ESQUERDA
+                //Uso o resultado do 'extractTextPlugin' como loade.. fallback se der ruim chamará o style, caso contrário chamara o css-loader
+                {
+                    test: /\.css$/,
+                    use: extractTextPlugin.extract({
+                        fallback: 'style-loader',
+                        use: 'css-loader'
+                    })
+                },
+
+                //Abaixo segue LOADERS para tratar arquivos do bootstrap de fontes... (woff, ttf, eot, svg)
+                {
+                    test: /\.(woff|woff2)(\?v=\d+\.\d+\.\d+)?$/,
+                    loader: 'url-loader?limit=10000&mimetype=application/font-woff'
+                },
+                {
+                    test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
+                    loader: 'url-loader?limit=10000&mimetype=application/octet-stream'
+                },
+                {
+                    test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
+                    loader: 'file-loader'
+                },
+                {
+                    test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+                    loader: 'url-loader?limit=10000&mimetype=image/svg+xml'
+                }
+            ]
+        },
+        plugins
+    }
