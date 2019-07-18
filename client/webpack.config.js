@@ -38,6 +38,8 @@ plugins.push(
 );
 
 if (process.env.NODE_ENV == 'production') {
+
+    plugins.push(new webpack.optimize.ModuleConcatenationPlugin());
     plugins.push(new babiliPlugin());
     
     plugins.push(new optimizeCSSAssetsPlugin({
