@@ -62,7 +62,12 @@ plugins.push(
     new extractTextPlugin("styles.css")
 );
 
+//URL de Dev.. stringfy é um parser
+let SERVICE_URL = JSON.stringify('http://localhost:3000');
+
 if (process.env.NODE_ENV == 'production') {
+
+    SERVICE_URL = JSON.stringify('http://prod.endereco:3000');
 
     plugins.push(new webpack.optimize.ModuleConcatenationPlugin());
     plugins.push(new babiliPlugin());
@@ -78,6 +83,10 @@ if (process.env.NODE_ENV == 'production') {
      }));    
 }
 
+//Tudo que tiver dentro de 'SERVICE_URL' no meu plugin, troque o valor para o valor que está dentro de 'SERVICE_URL'
+plugins.push(new webpack.DefinePlugin({
+    SERVICE_URL: SERVICE_URL
+}));
 
     //Criando nosso módulo do webpack passando as configurações em forma de objeto
     module.exports = {
