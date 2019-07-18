@@ -77,7 +77,7 @@ export class NegociacaoController {
             //Qnd me retornar uma promise ele fará o processo que o webpack irá entender
             //O webpack irá entender que isso é um módulo/parte do código a parte, ou seja, ele não irá loca no bundle.js
             // Ele criará um 0_bundle.js, e qnd eu usar esse método ele usará o bundle.ls, só irá carregar quando for solicitado
-            const { NegociacaoService } = await System.import('../domain/negociacao/NegociacaoService');
+            const { NegociacaoService } = await import('../domain/negociacao/NegociacaoService');
             const service = new NegociacaoService();
 
             const negociacoes = await service.obtemNegociacoesDoPeriodo();
